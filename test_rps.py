@@ -1,5 +1,7 @@
 import unittest
-from . import RPS, GameObject, AIPlayer, Hand
+from unittest.mock import patch, MagicMock
+
+from rps import RPS, GameObject, AIPlayer, Hand
 
 
 class RpsTest(unittest.TestCase):
@@ -11,7 +13,7 @@ class RpsTest(unittest.TestCase):
         self.paper = self.choices[Hand.P]
         self.scissors = self.choices[Hand.S]
 
-    def test_game_object_outcomes(self):
+    def test_winner(self):
         '''test the outcomes of each of the game object choices'''
         testCases = [
             (self.rock, self.paper, 'LOSE'),

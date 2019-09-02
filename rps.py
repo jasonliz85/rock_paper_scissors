@@ -40,10 +40,8 @@ class GameObject(object):
         return '<{} beats={}, loses={}>'.format(self.name, self.beats, self.loses)
 
     def winner(self, other):
-        '''
-        Logic used to determine who the winner is. Each class instance has a list to determine who it can win (beat)
-        or defeat (loses). It compares itself with another class instance.
-        '''
+        '''Compare this with another instance to determine who wins'''
+
         if other._name == self._name:
             logger.debug('{} draws with {}'.format(other.name, self.name))
             return Outcomes.D
@@ -63,17 +61,22 @@ class GameObject(object):
         return self._name.value
 
 
-class AIPlayer(object):
-    '''
-    Use this class to capture the AI player - At some point, this can be used to add more intelligence.
-    i.e. possibly use ML techniques
-    '''
+class Player(object):
     def __init__(self, choices):
-        self.history = []
         self.choices = choices
 
-    def get_next_choice(self):
-        return random.choice(self.choices)
+    def get_next_turn(self, choice):
+        logger.info('You selected {0}'.format(choice))
+        return self.choices[choice]
+
+
+class AIPlayer(Player):
+    '''
+    Use this class to capture the AI player - At some point, this can be used to
+    add more intelligence. i.e. possibly use ML techniques
+    '''
+    def get_next_turn(self):
+        return random.choice(list(self.choices.values()))
 
 
 class RPS(object):
@@ -86,8 +89,9 @@ class RPS(object):
             Hand.P: GameObject(Hand.P, beats=(Hand.R,), loses=(Hand.S,)),
             Hand.S: GameObject(Hand.S, beats=(Hand.P,), loses=(Hand.R,))
         }
-        self.player_ai = AIPlayer(list(self.choices.keys()))
-        self._reset_history()
+        self.player_1 = Player(self.choices)
+        self.player_2 = AIPlayer(self.choices)
+        self.history = []
 
     def _reset_history(self):
         ''' reset the history object'''
@@ -104,11 +108,7 @@ class RPS(object):
         ''' Print the stats'''
         logger.info(self.history)
 
-    def get_ai_choice(self):
-        ''' Use the ai object to get the next choice'''
-        return self.player_ai.get_next_choice()
-
-    def get_human_choice(self, choice):
+    def get_turn(self, choice):
         ''' Ask for input from the user to determine their choice'''
         logger.info('You selected {0}'.format(choice))
 
@@ -145,21 +145,23 @@ class RPS(object):
                 logger.info('Resetting the game')
                 self._reset_history()
                 continue
-            if choice not in self.choices.keys():
+            if choice not in self.choices:
                 logger.error('Not a recognised selection, please try again')
                 continue
 
             ## grab rock, paper or scissors for each player
-            player_1 = self.choices[choice]
-            player_2 = self.choices[self.get_ai_choice()]
-            logger.info('You chose: {}, AI chose: {}'.format(player_1.name, player_2.name))
+            p1_turn = self.player_1.get_next_turn(choice)
+            p2_turn = self.player_2.get_next_turn()
+            logger.info('You chose: {}, opponent chose: {}'.format(
+                p1_turn.name, p2_turn.name
+            ))
 
             ## now get the results
-            result = player_1.winner(player_1)
+            result = p1_turn.winner(p2_turn)
             logger.info('Results: You {}'.format(result.value))
 
             ## log outcome for
-            self.log_outcome(player_1, player_2, result)
+            self.log_outcome(p1_turn, p2_turn, result)
 
 
 if __name__ == '__main__':
