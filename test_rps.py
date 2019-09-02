@@ -44,12 +44,23 @@ class RpsTest(unittest.TestCase):
             (1, None),
             (2, None),
             (3, None),
-
         ]
+
         for user_input, expected in testCases:
-            actual = self.rps.get_human_choice(user_input)
+            actual = self.rps.get_turn(user_input)
             self.assertEqual(actual, expected)
+
+    @patch("builtins.input")
+    def test_run(self, input_m):
+        cases = [
+            's', 'q'
+        ]
+
+        input_m.side_effects = cases
+        # DOESN'T WORK
+        # self.rps.run(input_m)
+
 
 if __name__ == '__main__':
     unittest.main()
-   
+

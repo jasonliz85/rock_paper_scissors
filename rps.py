@@ -3,17 +3,19 @@ import random
 import logging
 
 logger = logging.getLogger(__name__)
+logging.root.setLevel(logging.DEBUG)
+
 
 RULES = '''
 Welcome to the rock paper scissors game.
-The rules: 
+The rules:
     Paper beats (wraps) Rock
     Rock beats (blunts) Scissors
     Scissors beats (cuts) Paper.
     You are playing against a computer
     To select an object, please choose:
         Rock [1], Paper [2] or Scissors [3],
-    To restart history [R], to exit [C] or [Q] and [S] for stats 
+    To restart history [R], to exit [C] or [Q] and [S] for stats
 '''
 
 
@@ -117,11 +119,13 @@ class RPS(object):
 
         if choice.upper() in ['C', 'Q', 'R', 'S']:
             return choice.upper()
+
+        # maybe make this r, p or s and the choices above 1-4?
         elif choice.upper() in ['1', '2', '3']:
             choice = int(choice)
             return list(self.choices.keys())[choice-1]
 
-    def run(self):
+    def run(self, input_fn=input):
         ''' Start the game'''
 
         ## print the rules
@@ -129,19 +133,22 @@ class RPS(object):
 
         while(True):
 
-            ## get the human choice
-            choice = self.get_human_choice(input('Select a Rock[1], Paper[2], Scissors[3], Quit[Q], Reset[R], Stats[S]:\n'))
+            ## get the player choice
+            choice = self.get_turn(
+                input_fn('Select a Rock[1], Paper[2], Scissors[3], Quit[Q], Reset[R], Stats[S]:\n')
+            )
+            print('>>', choice)
 
             ## ensure choices are dealt with
             if not choice:
                 logger.info('Did not recognise this choice, try again')
-            if choice in ['C', 'Q']:
+            if choice in ['c', 'C', 'q', 'Q']:
                 logger.info('Quitting game. Goodbye')
                 break
-            if choice in ['S']:
+            if choice in ['s', 'S']:
                 self.print_stats()
                 continue
-            if choice in ['R']:
+            if choice in ['r', 'R']:
                 logger.info('Resetting the game')
                 self._reset_history()
                 continue
