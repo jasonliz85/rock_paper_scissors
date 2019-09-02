@@ -81,6 +81,10 @@ class AIPlayer(Player):
         return random.choice(list(self.choices.values()))
 
 
+def user_input():
+    return input('Select a Rock[1], Paper[2], Scissors[3], Quit[Q], Reset[R], Stats[S]:\n')
+
+
 class RPS(object):
     '''
     RPS class used to capture the play workflow.
@@ -125,7 +129,7 @@ class RPS(object):
             choice = int(choice)
             return list(self.choices.keys())[choice-1]
 
-    def run(self, input_fn=input):
+    def run(self):
         ''' Start the game'''
 
         ## print the rules
@@ -134,10 +138,7 @@ class RPS(object):
         while(True):
 
             ## get the player choice
-            choice = self.get_turn(
-                input_fn('Select a Rock[1], Paper[2], Scissors[3], Quit[Q], Reset[R], Stats[S]:\n')
-            )
-            print('>>', choice)
+            choice = self.get_turn(user_input())
 
             ## ensure choices are dealt with
             if not choice:

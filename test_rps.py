@@ -50,15 +50,16 @@ class RpsTest(unittest.TestCase):
             actual = self.rps.get_turn(user_input)
             self.assertEqual(actual, expected)
 
-    @patch("builtins.input")
+    @patch("rps.user_input")
     def test_run(self, input_m):
         cases = [
-            's', 'q'
+            '1', 's', 'Q'
         ]
 
-        input_m.side_effects = cases
-        # DOESN'T WORK
-        # self.rps.run(input_m)
+        input_m.side_effect = cases
+
+        # run game
+        self.rps.run()
 
 
 if __name__ == '__main__':
