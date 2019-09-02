@@ -1,5 +1,7 @@
 import unittest
-from rates.ciro.code.tools.rps import RPS, GameObject, AIPlayer, Hand
+from unittest.mock import patch, MagicMock
+
+from rps import RPS, GameObject, AIPlayer, Hand
 
 
 class RpsTest(unittest.TestCase):
@@ -11,7 +13,7 @@ class RpsTest(unittest.TestCase):
         self.paper = self.choices[Hand.P]
         self.scissors = self.choices[Hand.S]
 
-    def test_game_object_outcomes(self):
+    def test_winner(self):
         '''test the outcomes of each of the game object choices'''
         testCases = [
             (self.rock, self.paper, 'LOSE'),
@@ -42,12 +44,24 @@ class RpsTest(unittest.TestCase):
             (1, None),
             (2, None),
             (3, None),
-
         ]
+
         for user_input, expected in testCases:
-            actual = self.rps.get_human_choice(user_input)
+            actual = self.rps.get_turn(user_input)
             self.assertEqual(actual, expected)
+
+    @patch("rps.user_input")
+    def test_run(self, input_m):
+        cases = [
+            '1', 's', 'Q'
+        ]
+
+        input_m.side_effect = cases
+
+        # run game
+        self.rps.run()
+
 
 if __name__ == '__main__':
     unittest.main()
-   
+
