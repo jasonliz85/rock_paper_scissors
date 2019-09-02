@@ -1,5 +1,5 @@
 import unittest
-from rates.ciro.code.tools.rps import RPS, GameObject, AIPlayer, Hand
+from . import RPS, GameObject, AIPlayer, Hand
 
 
 class RpsTest(unittest.TestCase):
